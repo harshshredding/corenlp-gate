@@ -1,7 +1,7 @@
 # CLaC Stanford Parser
 
 A gate plugin to parse using the latest stanford parsers. This plugin includes the following processing resources:
- - New Stanford Parser : Takes raw text as input and parses every sentence, outputing Token, Sentence, Dependency, and SyntaxTreeNode annotations.
+ - New Stanford Parser : Takes raw text as input and parses every sentence, outputing Token, Sentence, Dependency, and SyntaxTreeNode annotations. The parser can be configured to not use a tokenizer.
  - Dependency Tree Viewer 1 : A dependency parse visualizer that assumes the "New Stanford Parser" has already been run. This visualizer makes use of the dependency info included in the token features by the "New Stanford Parser".
  - Dependency Node Generator : Assumes the "New Stanford Parser" has been run. It generates DependencyTreeNode annotations.
  - Dependency Tree Viewer 2 : An alternate dependency parse visualizer that assumes "Dependency Node Generator" has been run. This visualizer sorts tree nodes according to the sequence of words in the sentence, potentially making long parses more readable. 
