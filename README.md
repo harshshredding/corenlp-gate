@@ -36,7 +36,7 @@ mvn install
 ```
 This will install the plugin in the local maven repository which is located in ~/.m2.
 
-Finally, load the plugin in Gate Developer register the plugin using the info in `~/pom.xml` . For eg :
+Finally, register the plugin in Gate Developer using the info in `~/pom.xml` . For eg :
  - groupID : ca.concordia.gate
  - artifactID: stanford-parser-corenlp
  - version: 1.0-SNAPSHOT

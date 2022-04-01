@@ -27,7 +27,7 @@ import java.util.stream.Collectors;
 /**
  * This plugin runs the CoreNLP pipeline on the document, generating "Token" and "Sentence" annotations.
  */
-@CreoleResource(name = "New Stanford Parser", comment = "Run CoreNLP pipeline on document")
+@CreoleResource(name = "StanfordParserCoreNLP", comment = "Run CoreNLP pipeline on document")
 public class CoreNLP extends AbstractLanguageAnalyser implements ProcessingResource {
     private Boolean useEnhanced;
     private Boolean srParse;
