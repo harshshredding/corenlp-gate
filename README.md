@@ -1,4 +1,4 @@
-# CLaC Stanford Parser
+# CoreNLP Gate Plugin
 
 A gate plugin to parse using the latest stanford parsers. This plugin includes the following processing resources:
  - New Stanford Parser : Takes raw text as input and parses every sentence, outputing Token, Sentence, Dependency, and SyntaxTreeNode annotations. The parser can be configured to not use a tokenizer.
