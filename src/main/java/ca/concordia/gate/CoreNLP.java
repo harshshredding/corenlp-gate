@@ -27,11 +27,13 @@ import java.util.stream.Collectors;
 /**
  * This plugin runs the CoreNLP pipeline on the document, generating "Token" and "Sentence" annotations.
  */
-@CreoleResource(name = "StanfordParserCoreNLP", comment = "Run CoreNLP pipeline on document")
+@CreoleResource(name = "CoreNlp", comment = "Run CoreNLP pipeline on document")
 public class CoreNLP extends AbstractLanguageAnalyser implements ProcessingResource {
     private Boolean useEnhanced;
     private Boolean srParse;
     private Boolean includeTokenizer;
+
+    private String language;
 
     @Override
     public void reInit() throws ResourceInstantiationException {
@@ -50,25 +52,34 @@ public class CoreNLP extends AbstractLanguageAnalyser implements ProcessingResou
         if (this.document == null) throw new GateRuntimeException("No document to process!");
         System.out.println("document name:" + this.document.getName());
         System.out.println("document size" + this.document.getContent().size());
+        System.out.println("Language:" + this.language);
         Properties coreNlpProps = new Properties();
+        if (language.equals("spanish")) {
+            coreNlpProps.setProperty("tokenize.language","es");
+            coreNlpProps.setProperty("pos.model","edu/stanford/nlp/models/pos-tagger/spanish-ud.tagger");
+            coreNlpProps.setProperty("ner.model","edu/stanford/nlp/models/ner/spanish.ancora.distsim.s512.crf.ser.gz");
+            coreNlpProps.setProperty("ner.applyNumericClassifiers","true");
+            coreNlpProps.setProperty("ner.useSUTime","true");
+            coreNlpProps.setProperty("ner.language","es");
+            coreNlpProps.setProperty("sutime.language","spanish");
+            coreNlpProps.setProperty("parse.model","edu/stanford/nlp/models/srparser/spanishSR.beam.ser.gz");
+            coreNlpProps.setProperty("depparse.model","edu/stanford/nlp/models/parser/nndep/UD_Spanish.gz");
+            coreNlpProps.setProperty("depparse.language", "spanish");
+        }
         if (srParse) {
             coreNlpProps.setProperty("parse.model", "edu/stanford/nlp/models/srparser/englishSR.beam.ser.gz");
         }
         if (this.includeTokenizer) {
             coreNlpProps.setProperty("annotators", "tokenize,ssplit,pos,parse,depparse");
-            executeWithTokenizer();
+            executeWithTokenizer(coreNlpProps);
         } else {
             coreNlpProps.setProperty("annotators", "ssplit,pos,parse,depparse");
-            executeWithoutTokenizer();
+            executeWithoutTokenizer(coreNlpProps);
         }
     }
 
-    public void executeWithTokenizer() throws ExecutionException {
-        Properties props = new Properties();
+    public void executeWithTokenizer(Properties props) throws ExecutionException {
         props.setProperty("annotators", "tokenize,ssplit,pos,parse,depparse");
-        if (srParse) {
-            props.setProperty("parse.model", "edu/stanford/nlp/models/srparser/englishSR.beam.ser.gz");
-        }
         StanfordCoreNLP pipeline = new StanfordCoreNLP(props);
         CoreDocument document = new CoreDocument(this.document.getContent().toString());
         pipeline.annotate(document);
@@ -236,14 +247,13 @@ public class CoreNLP extends AbstractLanguageAnalyser implements ProcessingResou
         document.set(CoreAnnotations.TokensAnnotation.class, tokenLabelList);
     }
 
-    public void executeWithoutTokenizer() throws ExecutionException {
+    public void executeWithoutTokenizer(Properties props) throws ExecutionException {
         edu.stanford.nlp.pipeline.Annotation document = new edu.stanford.nlp.pipeline.Annotation(this.document.getContent().toString());
         addTokens(document);
         for (CoreLabel label : document.get(CoreAnnotations.TokensAnnotation.class)) {
             System.out.println(label.get(CoreAnnotations.CharacterOffsetBeginAnnotation.class) + ","
                     + label.get(CoreAnnotations.CharacterOffsetEndAnnotation.class) + " " + label.word());
         }
-        Properties props = new Properties();
         // we don't tokenize
         props.setProperty("annotators", "ssplit,pos,parse,depparse");
         StanfordCoreNLP pipeline = new StanfordCoreNLP(props, false);
@@ -393,6 +403,13 @@ public class CoreNLP extends AbstractLanguageAnalyser implements ProcessingResou
         this.includeTokenizer = includeTokenizer;
     }
 
+    @RunTime
+    @Optional
+    @CreoleParameter(comment = "The language of the input text", defaultValue = "english")
+    public void setLanguage(String language) {
+        this.language = language;
+    }
+
     public Boolean getIncludeTokenizer() {return this.includeTokenizer;}
 
     public Boolean getUseEnhanced() {
@@ -401,5 +418,9 @@ public class CoreNLP extends AbstractLanguageAnalyser implements ProcessingResou
 
     public Boolean getSrParse() {
         return this.srParse;
+    }
+
+    public String getLanguage() {
+        return this.language;
     }
 }
