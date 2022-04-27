@@ -250,10 +250,10 @@ public class CoreNLP extends AbstractLanguageAnalyser implements ProcessingResou
     public void executeWithoutTokenizer(Properties props) throws ExecutionException {
         edu.stanford.nlp.pipeline.Annotation document = new edu.stanford.nlp.pipeline.Annotation(this.document.getContent().toString());
         addTokens(document);
-        for (CoreLabel label : document.get(CoreAnnotations.TokensAnnotation.class)) {
-            System.out.println(label.get(CoreAnnotations.CharacterOffsetBeginAnnotation.class) + ","
-                    + label.get(CoreAnnotations.CharacterOffsetEndAnnotation.class) + " " + label.word());
-        }
+//        for (CoreLabel label : document.get(CoreAnnotations.TokensAnnotation.class)) {
+//            System.out.println(label.get(CoreAnnotations.CharacterOffsetBeginAnnotation.class) + ","
+//                    + label.get(CoreAnnotations.CharacterOffsetEndAnnotation.class) + " " + label.word());
+//        }
         // we don't tokenize
         props.setProperty("annotators", "ssplit,pos,parse,depparse");
         StanfordCoreNLP pipeline = new StanfordCoreNLP(props, false);
